@@ -22,7 +22,7 @@ router.route("/register").post(async (req, res) => {
 router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
   try {
-    const token = await userService.login(username, password);
+    const {token, returnedUser} = await userService.login(username, password);
     res
       .status(200)
       .cookie("jwt", token, {
@@ -32,10 +32,16 @@ router.route("/login").post(async (req, res) => {
         httpOnly: true,
         secure: true,
       })
-      .send("logged");
+      .send(returnedUser);
   } catch (err: any) {
     res.status(400).send(err.message);
   }
 });
+
+router.route("/logout").get(async (req, res) => {
+  res.status(200).clearCookie('jwt').end()
+})
+
+
 
 export default router;

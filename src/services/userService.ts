@@ -34,8 +34,11 @@ const userService = {
       id: user.id,
     };
     const token = jwt.sign(objectToEncrypt, process.env.SECRET || "");
-
-    return token;
+    const returnedUser = {
+      fullname: user.fullname,
+      username: user.username
+    }
+    return {token, returnedUser};
   },
 };
 

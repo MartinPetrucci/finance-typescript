@@ -10,4 +10,14 @@ export const movementSchema = new Schema({
   concept: String,
 });
 
-// export const Movement = model("Movement", movementSchema);
+movementSchema.set("toJSON", {
+  transform: (document, returnedObject) => {
+    returnedObject.id = returnedObject._id.toString();
+    returnedObject.date = returnedObject.date.toISOString().split('T')[0]
+    delete returnedObject._id;
+    delete returnedObject.__v;
+  },
+});
+
+
+export const Movement = model("Movement", movementSchema);

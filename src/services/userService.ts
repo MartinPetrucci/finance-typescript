@@ -24,7 +24,7 @@ const userService = {
   },
   login: async (username: string, password: string) => {
     const user = await User.findOne({ username: username });
-
+    
     const correct =
       user != null && (await compare(password, user.passwordHash));
 

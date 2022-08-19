@@ -1,12 +1,16 @@
 import { Router } from "express";
 import auth from "../middlewares/auth";
+import movementsService from "../services/movementsService";
 import userService from "../services/userService";
 
 const router = Router();
 
-router.route("/hello").get(auth ,async (req, res) => {
-  console.log('hello locals',res.locals.id)
-  res.send("hello endpoint users");
+
+//PRUEBA INSERT
+router.route("/hello").get( async (req, res) => {
+  const id = "62fd3e7c48df10f9962d9d04"
+    await movementsService.addMovement(id)
+    res.status(201).end()
 });
 
 router.route("/register").post(async (req, res) => {
@@ -23,6 +27,7 @@ router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
   try {
     const {token, returnedUser} = await userService.login(username, password);
+    console.log({returnedUser})
     res
       .status(200)
       .cookie("jwt", token, {

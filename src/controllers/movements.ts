@@ -6,6 +6,7 @@ router.route("/").get(async (req, res) => {
     const id = res.locals.id
     const movements = await movementsService.getMovements(id)
     console.log({movements})
+    //FIX (ver getMovements)
     res.status(200).send(movements)
 }).post(async (req, res) => {
     const id = res.locals.id

@@ -1,6 +1,7 @@
 import { User } from "../models/User";
 import { hash, genSalt, compare } from "bcrypt";
 import jwt from "jsonwebtoken";
+import { createMonths } from "./monthsService";
 interface UserRegister {
   fullname: string;
   username: string;
@@ -12,12 +13,16 @@ const userService = {
     const user = await User.findOne({ username: userRegister.username });
     if (user) throw new Error("User already exists");
 
+    const months = createMonths()
+    console.log('months->>>>',months)
+
     const salt = await genSalt(10);
     const passwordHash = await hash(userRegister.password, salt);
     const newUser = new User({
       fullname: userRegister.fullname,
       username: userRegister.username,
       passwordHash,
+      months: months
     });
     const registeredUser = await newUser.save();
     return registeredUser;

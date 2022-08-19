@@ -6,13 +6,14 @@ const movementsService = {
   getTotalBalance: async (userId: string) => {
     const user = await User.findOne({ _id: userId });
     console.log({ user });
-    const movements = user?.toJSON().movements;
-    console.log({ movements });
+    // const movements = user?.toJSON().movements;
+    // console.log({ movements });
   },
   getMovements: async (userId: string) => {
     const user = await User.findOne({ _id: oId(userId) });
-    const movements = user?.toJSON().movements;
-    return movements;
+    // const movements = user?.toJSON().movements;
+    // return movements;
+    return []
   },
   addMovement: async (userId: string) => {
     const newMovement = new Movement({

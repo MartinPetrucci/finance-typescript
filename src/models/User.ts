@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+import { monthSchema } from "./Month";
 import { movementSchema } from "./Movement";
 
 const userSchema = new Schema({
@@ -14,7 +15,9 @@ const userSchema = new Schema({
     type: String,
     required: [true, 'Password required']
   },
-  movements: [movementSchema],
+  months: {
+    type: [monthSchema]
+  }
 });
 
 userSchema.set("toJSON", {

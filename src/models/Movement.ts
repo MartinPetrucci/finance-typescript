@@ -1,13 +1,21 @@
 import { Schema, model } from "mongoose";
 
-export const movementSchema = new Schema({
-  amount: Number,
+export interface IMovement {
+  amount: number;
+  movementType: string;
+  date: Date;
+  concept: string;
+}
+
+export const movementSchema = new Schema<IMovement>({
+  amount: {type: Number, required: true},
   movementType: {
     type: String,
     enum: ["INCOME", "EXPENSE"],
+    required: true
   },
-  date: Date,
-  concept: String,
+  date: {type: Date, required: true},
+  concept: {type: String, required: true},
 });
 
 movementSchema.set("toJSON", {
@@ -19,5 +27,4 @@ movementSchema.set("toJSON", {
   },
 });
 
-
-export const Movement = model("Movement", movementSchema);
+export const Movement = model<IMovement>("Movement", movementSchema);

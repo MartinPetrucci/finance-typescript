@@ -14,8 +14,6 @@ const userService = {
     if (user) throw new Error("User already exists");
 
     const months = createMonths()
-    console.log('months->>>>',months)
-
     const salt = await genSalt(10);
     const passwordHash = await hash(userRegister.password, salt);
     const newUser = new User({

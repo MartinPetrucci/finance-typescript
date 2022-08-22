@@ -9,7 +9,7 @@ const router = Router();
 //PRUEBA INSERT
 router.route("/hello").get( async (req, res) => {
   const id = "62fd3e7c48df10f9962d9d04"
-    await movementsService.addMovement(id)
+    // await movementsService.addMovement(id)
     res.status(201).end()
 });
 
@@ -27,6 +27,7 @@ router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
   try {
     const {token, returnedUser} = await userService.login(username, password);
+    console.log({token})
     console.log({returnedUser})
     res
       .status(200)

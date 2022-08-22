@@ -1,67 +1,76 @@
-import { Types } from "mongoose"
-import { oId } from "../helpers";
-import { Movement } from "../models/Movement";
+import { Types } from "mongoose";
+import { oId, totalBalance } from "../helpers";
+import { IMovement, Movement, movementSchema } from "../models/Movement";
 import { User } from "../models/User";
+import { getYearMonth } from "./monthsService";
 const movementsService = {
   getTotalBalance: async (userId: string) => {
     const user = await User.findOne({ _id: userId });
-    console.log({ user });
-    // const movements = user?.toJSON().movements;
-    // console.log({ movements });
+    if (user) {
+      const months = user.months;
+      return totalBalance(months);
+    }
   },
-  getMovements: async (userId: string) => {
+  getMonths: async (userId: string) => {
     const user = await User.findOne({ _id: oId(userId) });
-    // const movements = user?.toJSON().movements;
-    // return movements;
-    return []
+    const months = user?.months;
+    return months;
   },
-  addMovement: async (userId: string) => {
-    const newMovement = new Movement({
-      amount: 35000,
-      concept: "El distinto",
-      date: new Date(2022, 7, 31),
-      movementType: "EXPENSE",
-    });
+  addMovement: async (userId: string, movement: IMovement) => {
+    const newMovement = new Movement(movement);
+    console.log({ newMovement });
 
-    // const movs = createMovements(500)
-    // movs.forEach((mov) => {
-    //   console.log(mov.toJSON())
-    // })
+    const { amount, date, movementType } = newMovement;
+    const movementDate = getYearMonth(date || new Date());
     try {
-      const response = await User.findOneAndUpdate(
-        { _id: oId(userId) },
-        {
-          $push: {
-            movements: {
-                $each: [newMovement],
-                $sort: {date: -1} 
-            }
-          },
+      const user = await User.findOne({ _id: (userId) });
+      const month = user?.months?.find((month) => month.date == movementDate);
+      if (month) {
+        if (movementType === "INCOME") {
+          month.incomes.movements.push(newMovement);
+          month.incomes.movements.sort((a, b) => sortByDate(a, b));
+          month.incomes.total += amount || 0;
+        } else {
+          month.expenses.movements.push(newMovement);
+          month.expenses.movements.sort((a, b) => sortByDate(a, b));
+          month.expenses.total += amount || 0;
         }
-      );
-      console.log('arre',response)
+      }
+      await user?.save();
     } catch (error) {
-        console.log({error})
+      console.log('ERROR->', error)
     }
   },
 };
 
+const sortByDate = (a: IMovement, b: IMovement) => {
+  if (a.date > b.date) return 1;
+  if (a.date < b.date) return -1;
+  return 0;
+};
+
 const randomIntFromInterval = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
 
 export const createMovements = (amount: number) => {
-  let movements = []
-    for(let i = 0; i < amount; i++) {
-      const newMovement = new Movement({
-        amount: Number.parseFloat(((Math.random() * 3000) * (Math.random() * 15)).toFixed(2)),
-        concept: "Ordenado",
-        date: new Date(2022, randomIntFromInterval(0,7) , randomIntFromInterval(0,31)),
-        movementType: (Math.random() > 0.5 ? "INCOME" : "EXPENSE")
-      })
-      movements.push(newMovement)
-    }
-    return movements;
-}
+  let movements = [];
+  for (let i = 0; i < amount; i++) {
+    const newMovement = new Movement({
+      amount: Number.parseFloat(
+        (Math.random() * 3000 * (Math.random() * 15)).toFixed(2)
+      ),
+      concept: "Ordenado",
+      date: new Date(
+        2022,
+        randomIntFromInterval(0, 7),
+        randomIntFromInterval(0, 31)
+      ),
+      movementType: Math.random() > 0.5 ? "INCOME" : "EXPENSE",
+    });
+    movements.push(newMovement);
+  }
+  return movements;
+};
 
 export default movementsService;

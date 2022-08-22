@@ -1,8 +1,15 @@
-import { Schema, model } from "mongoose";
-import { monthSchema } from "./Month";
+import { Schema, model, Types } from "mongoose";
+import { IMonth, monthSchema } from "./Month";
 import { movementSchema } from "./Movement";
 
-const userSchema = new Schema({
+export interface IUser {
+  fullname: string;
+  username: string;
+  passwordHash: string;
+  months: Types.DocumentArray<IMonth>
+}
+
+const userSchema = new Schema<IUser>({
   fullname: {
     type: String,
     required: [true, 'Fullname required']
@@ -16,7 +23,8 @@ const userSchema = new Schema({
     required: [true, 'Password required']
   },
   months: {
-    type: [monthSchema]
+    type: [monthSchema],
+    required: true
   }
 });
 
@@ -29,4 +37,4 @@ userSchema.set("toJSON", {
   },
 });
 
-export const User = model("User", userSchema);
+export const User = model<IUser>("User", userSchema);

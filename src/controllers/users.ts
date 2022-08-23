@@ -5,12 +5,11 @@ import userService from "../services/userService";
 
 const router = Router();
 
-
 //PRUEBA INSERT
-router.route("/hello").get( async (req, res) => {
-  const id = "62fd3e7c48df10f9962d9d04"
-    // await movementsService.addMovement(id)
-    res.status(201).end()
+router.route("/hello").get(async (req, res) => {
+  const id = "62fd3e7c48df10f9962d9d04";
+  // await movementsService.addMovement(id)
+  res.status(201).end();
 });
 
 router.route("/register").post(async (req, res) => {
@@ -26,9 +25,9 @@ router.route("/register").post(async (req, res) => {
 router.route("/login").post(async (req, res) => {
   const { username, password } = req.body;
   try {
-    const {token, returnedUser} = await userService.login(username, password);
-    console.log({token})
-    console.log({returnedUser})
+    const { token, returnedUser } = await userService.login(username, password);
+    console.log({ token });
+    console.log({ returnedUser });
     res
       .status(200)
       .cookie("jwt", token, {
@@ -45,9 +44,7 @@ router.route("/login").post(async (req, res) => {
 });
 
 router.route("/logout").get(async (req, res) => {
-  res.status(200).clearCookie('jwt').end()
-})
-
-
+  res.status(200).clearCookie("jwt").end();
+});
 
 export default router;

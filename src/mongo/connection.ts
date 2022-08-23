@@ -1,11 +1,9 @@
 import mongoose from "mongoose";
-const connection = process.env.CONNECTION_STRING || "";
+const connectionString = process.env.CONNECTION_STRING || "";
 
-mongoose
-  .connect(connection)
-  .then(() => {
-    console.log("database connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+mongoose.connect(connectionString).then((res) => {
+  console.log('db connected')
+}).catch((err) => {
+  console.log('error while connecting db', err)
+})
+

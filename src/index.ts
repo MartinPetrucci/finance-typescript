@@ -7,7 +7,7 @@ config();
 import "./mongo/connection";
 import cookieParser from 'cookie-parser'
 import auth from "./middlewares/auth";
-const app = express();
+export const app = express();
 app.use(cookieParser())
 app.use(express.json());
 app.use(cors({
@@ -20,6 +20,6 @@ app.use("/users", users);
 app.use("/movements", auth, movements)
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+export const server = app.listen(PORT, () => {
   console.log("app listening on port " + PORT);
 });
